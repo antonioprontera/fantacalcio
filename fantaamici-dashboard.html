@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FantaAmici — Dashboard di Lega</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          bg: '#0D1411',
+          surface: '#131B17',
+          surface2: '#1B2620',
+          line: '#243128',
+          pitch: '#2F8F52',
+          pitchdark: '#1F6B3B',
+          lime: '#9AFF6E',
+          gold: '#E4B455',
+          ink: '#E9F2EC',
+          muted: '#8CA097',
+        },
+        fontFamily: {
+          display: ['"Bebas Neue"', 'sans-serif'],
+          body: ['Inter', 'sans-serif'],
+          mono: ['"JetBrains Mono"', 'monospace'],
+        },
+      },
+    },
+  }
+</script>
+<style>
+  body {
+    background-color: #0D1411;
+    background-image:
+      repeating-linear-gradient(135deg, rgba(47,143,82,0.045) 0px, rgba(47,143,82,0.045) 40px, transparent 40px, transparent 80px);
+  }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: #0D1411; }
+  ::-webkit-scrollbar-thumb { background: #243128; border-radius: 999px; }
+  ::-webkit-scrollbar-thumb:hover { background: #2F8F52; }
+
+  .tab-panel.hidden { display: none; }
+
+  details > summary { list-style: none; cursor: pointer; }
+  details > summary::-webkit-details-marker { display: none; }
+  details[open] .chev { transform: rotate(180deg); }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+
+  .pulse-dot {
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.35; }
+  }
+
+  :focus-visible {
+    outline: 2px solid #9AFF6E;
+    outline-offset: 2px;
+  }
+</style>
+</head>
+<body class="font-body bg-bg text-ink antialiased min-h-screen">
+
+<!-- NAVBAR -->
+<header class="fixed top-0 inset-x-0 z-50">
+  <nav class="backdrop-blur bg-bg/85 border-b border-line">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <!-- Brand -->
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-full bg-pitch/15 ring-1 ring-pitch/50 flex items-center justify-center">
+            <svg viewBox="0 0 24 24" class="w-5 h-5 text-lime" fill="none" stroke="currentColor" stroke-width="1.6">
+              <circle cx="12" cy="12" r="9"/>
+              <path d="M12 8.2l3 2.1-1.1 3.5H10.1L9 10.3z" stroke-linejoin="round"/>
+              <path d="M12 3v5.2M4.5 8.5l4.5 1.8M19.5 8.5L15 10.3M6.7 18.4l2.9-4.6M17.3 18.4l-2.9-4.6"/>
+            </svg>
+          </div>
+          <div class="leading-none">
+            <p class="font-display text-2xl tracking-wide text-ink">FANTAAMICI</p>
+            <p class="text-[10px] uppercase tracking-[0.2em] text-muted -mt-0.5">Lega Fantacalcio</p>
+          </div>
+        </div>
+
+        <!-- Desktop tabs -->
+        <div class="hidden md:flex items-center gap-1 bg-surface/60 border border-line rounded-full p-1">
+          <button data-tab="classifica" class="tab-btn active-tab px-4 py-2 rounded-full text-sm font-semibold tracking-wide transition-colors">
+            Classifica
+          </button>
+          <button data-tab="rose" class="tab-btn px-4 py-2 rounded-full text-sm font-semibold tracking-wide transition-colors">
+            Rose
+          </button>
+          <button data-tab="albodoro" class="tab-btn px-4 py-2 rounded-full text-sm font-semibold tracking-wide transition-colors">
+            Albo d'Oro
+          </button>
+          <button data-tab="regolamento" class="tab-btn px-4 py-2 rounded-full text-sm font-semibold tracking-wide transition-colors">
+            Regolamento
+          </button>
+        </div>
+
+        <!-- Mobile toggle -->
+        <button id="menu-toggle" class="md:hidden w-10 h-10 flex items-center justify-center rounded-lg border border-line text-ink" aria-label="Apri menu" aria-expanded="false">
+          <svg id="icon-menu" viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" d="M4 7h16M4 12h16M4 17h16"/></svg>
+          <svg id="icon-close" viewBox="0 0 24 24" class="w-5 h-5 hidden" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
+
+      <!-- Mobile menu -->
+      <div id="mobile-menu" class="hidden md:hidden pb-4 flex flex-col gap-1">
+        <button data-tab="classifica" class="tab-btn active-tab text-left px-4 py-2.5 rounded-lg text-sm font-semibold">Classifica</button>
+        <button data-tab="rose" class="tab-btn text-left px-4 py-2.5 rounded-lg text-sm font-semibold">Rose</button>
+        <button data-tab="albodoro" class="tab-btn text-left px-4 py-2.5 rounded-lg text-sm font-semibold">Albo d'Oro</button>
+        <button data-tab="regolamento" class="tab-btn text-left px-4 py-2.5 rounded-lg text-sm font-semibold">Regolamento</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Match ticker -->
+  <div class="bg-surface2/70 border-b border-line">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-1.5 flex items-center gap-2 text-xs text-muted overflow-x-auto whitespace-nowrap">
+      <span class="w-1.5 h-1.5 rounded-full bg-lime pulse-dot shrink-0"></span>
+      <span class="text-ink font-medium">Giornata 5 di 38</span>
+      <span class="text-line">•</span>
+      <span>Chiusura formazioni: <span class="text-ink">sab 30 ago, ore 15:00</span></span>
+      <span class="text-line">•</span>
+      <span>Budget riparazioni: <span class="text-gold font-mono">50 cr</span> a squadra</span>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-20">
+
+  <!-- ================= CLASSIFICA ================= -->
+  <section id="tab-classifica" class="tab-panel">
+    <div class="mb-8">
+      <p class="text-lime text-xs font-mono uppercase tracking-[0.25em] mb-1">Stagione 2026/27</p>
+      <h1 class="font-display text-5xl tracking-wide">CLASSIFICA</h1>
+      <p class="text-muted mt-2 max-w-xl">Aggiornata alla giornata 5. Le prime tre lottano per lo scudetto, l'ultima è in zona fantapenitenza: il presidente offre da bere alla prossima cena di lega.</p>
+    </div>
+
+    <div class="rounded-2xl border border-line bg-surface overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm min-w-[720px]">
+          <thead>
+            <tr class="text-muted text-xs uppercase tracking-wider border-b border-line">
+              <th class="text-left font-semibold px-5 py-3.5 w-12">#</th>
+              <th class="text-left font-semibold px-3 py-3.5">Squadra</th>
+              <th class="text-center font-semibold px-3 py-3.5">PG</th>
+              <th class="text-center font-semibold px-3 py-3.5">V</th>
+              <th class="text-center font-semibold px-3 py-3.5">N</th>
+              <th class="text-center font-semibold px-3 py-3.5">P</th>
+              <th class="text-center font-semibold px-3 py-3.5">GF</th>
+              <th class="text-center font-semibold px-3 py-3.5">GS</th>
+              <th class="text-center font-semibold px-3 py-3.5">DR</th>
+              <th class="text-center font-semibold px-5 py-3.5">PT</th>
+            </tr>
+          </thead>
+          <tbody class="font-mono divide-y divide-line">
+
+            <tr class="border-l-2 border-lime hover:bg-surface2/60 transition-colors">
+              <td class="px-5 py-3.5"><span class="inline-flex items-center justify-center w-7 h-7 rounded-md bg-lime/15 text-lime font-bold">1</span></td>
+              <td class="px-3 py-3.5 font-body">
+                <div class="flex items-center gap-2.5">
+                  <span class="w-7 h-7 rounded-full bg-emerald-700 flex items-center justify-center text-[10px] font-bold text-white">TS</span>
+                  <span class="font-semibold">Toro Scatenato</span>
+                </div>
+              </td>
+              <td class="text-center px-3 py-3.5">5</td>
+              <td class="text-center px-3 py-3.5 text-lime">4</td>
+              <td class="text-center px-3 py-3.5">1</td>
+              <td class="text-center px-3 py-3.5">0</td>
+              <td class="text-center px-3 py-3.5">62</td>
+              <td class="text-center px-3 py-3.5">41</td>
+              <td class="text-center px-3 py-3.5 text-lime">+21</td>
+              <td class="text-center px-5 py-3.5 text-lime font-bold text-base">13</td>
+            </tr>
+
+            <tr class="border-l-2 border-lime hover:bg-surface2/60 transition-colors">
+              <td class="px-5 py-3.5"><span class="inline-flex items-center justify-center w-7 h-7 rounded-md bg-lime/15 text-lime font-bold">2</span></td>
+              <td class="px-3 py-3.5 font-body">
+                <div class="flex items-center gap-2.5">
+                  <span class="w-7 h-7 rounded-full bg-sky-700 flex items-center justify-center text-[10px] font-bold text-white">RD</span>
+                  <span class="font-semibold">Real Divano FC</span>
+                </div>
+              </td>
+              <td class="text-center px-3 py-3.5">5</td>
+              <td class="text-center px-3 py-3.5">3</td>
+              <td class="text-center px-3 py-3.5">2</td>
+              <td class="text-center px-3 py-3.5">0</td>
+              <td class="text-center px-3 py-3.5">58</td>
+              <td class="text-center px-3 py-3.5">45</td>
+              <td class="text-center px-3 py-3.5 text-lime">+13</td>
+              <td class="text-center px-5 py-3.5 font-bold text-base">11</td>
+            </tr>
+
+            <tr class="border-l-2 border-lime hover:bg-surface2/60 transition-colors">
+              <td class="px-5 py-3.5"><span class="inline-flex items-center justify-center w-7 h-7 rounded-md bg-lime/15 text-lime font-bold">3</span></td>
+              <td class="px-3 py-3.5 font-body">
+                <div class="flex items-center gap-2.5">
+                  <span class="w-7 h-7 rounded-full bg-rose-700 flex items-center justify-center text-[10px] font-bold text-white">BQ</span>
+                  <span class="font-semibold">Bomber di Quartiere</span>
+                </div>
+              </td>
+              <td class="text-center px-3 py-3.5">5</td>
+              <td class="text-center px-3 py-3.5">3</td>
+              <td class="text-center px-3 py-3.5">1</td>
+              <td class="text-center px-3 py-3.5">1</td>
+              <td class="text-center px-3 py-3.5">55</td>
+              <td class="text-center px-3 py-3.5">48</td>
+              <td class="text-center px-3 py-3.5 text-lime">+7</td>
+              <td class="text-center px-5 py-3.5 font-bold text-base">10</td>
+            </tr>
+
+            <tr class="border-l-2 border-transparent hover:bg-surface2/60 transition-colors">
+              <td class="px-5 py-3.5"><span class="inline-flex items-center justify-center w-7 h-7 rounded-md bg-surface2 text-muted font-bold">4</span></td>
+              <td class="px-3 py-3.5 font-body">
+                <div class="flex items-center gap-2.5">
+                  <span class="w-7 h-7 rounded-full bg-amber-700 flex items-center justify-center text-[10px] font-bold text-white">LB</span>
+                  <span class="font-semibold">I Leoni da Bar</span>
+                </div>
+              </td>
+              <td class="text-center px-3 py-3.5">5</td>
+              <td class="text-center px-3 py-3.5">2</td>
+              <td class="text-center px-3 py-3.5">3</td>
+              <td class="text-center px-3 py-3.5">0</td>
+              <td class="text-center px-3 py-3.5">50</td>
+              <td class="text-center px-3 py-3.5">47</td>
+              <td class="text-center px-3 py-3.5 text-lime">+3</td>
+              <td class="text-center px-5 py-3.5 font-bold text-base">9</td>
+            </tr>
+
+            <tr class="border-l-2 border-transparent hover:bg-surface2/60 transition-colors">
+              <td class="px-5 py-3.5"><span class="inline-flex items-center justify-center w-7 h-7 rounded-md bg-surface2 text-muted font-bold">5</span></td>
+              <td class="px-3 py-3.5 font-body">
+                <div class="flex items-center gap-2.5">
+                  <span class="w-7 h-7 rounded-full bg-violet-700 flex items-center justify-center text-[10px] font-bold text-white">PU</span>
+                  <span class="font-semibold">Pallonari United</span>
+                </div>
+              </td>
+              <td class="text-center px-3 py-3.5">5</td>
+              <td class="text-center px-3 py-3.5">2</td>
+              <td class="text-center px-3 py-3.5">2</td>
+              <td class="text-center px-3 py-3.5">1</td>
+              <td class="text-center px-3 py-3.5">49</td>
+              <td class="text-center px-3 py-3.5">50</td>
+              <td class="text-center px-3 py-3.5 text-rose-400">-1</td>
+              <td class="text-center px-5 py-3.5 font-bold text-base">8</td>
+            </tr>
+
+            <tr class="border-l-2 border-transparent hover:bg-surface2/60 transition-colors">
+              <td class="px-5 py-3.5"><span class="inline-flex items-center justify-center w-7 h-7 rounded-md bg-surface2 text-muted font-bold">6</span></td>
+              <td class="px-3 py-3.5 font-body">
+                <div class="flex items-center gap-2.5">
+                  <span class="w-7 h-7 rounded-full bg-orange-700 flex items-center justify-center text-[10px] font-bold text-white">UL</span>
+                  <span class="font-semibold">Ultras del Lunedì</span>
+                </div>
+              </td>
+              <td class="text-center px-3 py-3.5">5</td>
+              <td class="text-center px-3 py-3.5">1</td>
+              <td class="text-center px-3 py-3.5">3</td>
+              <td class="text-center px-3 py-3.5">1</td>
+              <td class="text-center px-3 py-3.5">44</td>
+              <td class="text-center px-3 py-3.5">46</td>
+              <td class="text-center px-3 py-3.5 text-rose-400">-2</td>
+              <td class="text-center px-5 py-3.5 font-bold text-base">6</td>
+            </tr>
+
+            <tr class="border-l-2 border-transparent hover:bg-surface2/60 transition-colors">
+              <td class="px-5 py-3.5"><span class="inline-flex items-center justify-center w-7 h-7 rounded-md bg-surface2 text-muted font-bold">7</span></td>
+              <td class="px-3 py-3.5 font-body">
+                <div class="flex items-center gap-2.5">
+                  <span class="w-7 h-7 rounded-full bg-teal-700 flex items-center justify-center text-[10px] font-bold text-white">AU</span>
+                  <span class="font-semibold">Attila e i suoi Unni</span>
+                </div>
+              </td>
+              <td class="text-center px-3 py-3.5">5</td>
+              <td class="text-center px-3 py-3.5">1</td>
+              <td class="text-center px-3 py-3.5">1</td>
+              <td class="text-center px-3 py-3.5">3</td>
+              <td class="text-center px-3 py-3.5">40</td>
+              <td class="text-center px-3 py-3.5">55</td>
+              <td class="text-center px-3 py-3.5 text-rose-400">-15</td>
+              <td class="text-center px-5 py-3.5 font-bold text-base">4</td>
+            </tr>
+
+            <tr class="border-l-2 border-rose-500 hover:bg-surface2/60 transition-colors">
+              <td class="px-5 py-3.5"><span class="inline-flex items-center justify-center w-7 h-7 rounded-md bg-rose-500/15 text-rose-400 font-bold">8</span></td>
+              <td class="px-3 py-3.5 font-body">
+                <div class="flex items-center gap-2.5">
+                  <span class="w-7 h-7 rounded-full bg-fuchsia-700 flex items-center justify-center text-[10px] font-bold text-white">SR</span>
+                  <span class="font-semibold">Sfigatti Rovesciati</span>
+                </div>
+              </td>
+              <td class="text-center px-3 py-3.5">5</td>
+              <td class="text-center px-3 py-3.5">0</td>
+              <td class="text-center px-3 py-3.5">2</td>
+              <td class="text-center px-3 py-3.5">3</td>
+              <td class="text-center px-3 py-3.5">35</td>
+              <td class="text-center px-3 py-3.5">60</td>
+              <td class="text-center px-3 py-3.5 text-rose-400">-25</td>
+              <td class="text-center px-5 py-3.5 text-rose-400 font-bold text-base">2</td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+
+      <div class="flex flex-wrap gap-x-6 gap-y-2 px-5 py-3.5 border-t border-line text-xs text-muted">
+        <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-sm bg-lime/40"></span>Zona Scudetto</span>
+        <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-sm bg-rose-500/40"></span>Zona Fantapenitenza</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ROSE ================= -->
+  <section id="tab-rose" class="tab-panel hidden">
+    <div class="mb-8">
+      <p class="text-lime text-xs font-mono uppercase tracking-[0.25em] mb-1">8 squadre • 500 crediti a testa</p>
+      <h1 class="font-display text-5xl tracking-wide">ROSE</h1>
+      <p class="text-muted mt-2 max-w-xl">I titolari chiave di ogni formazione. Chip colorati per ruolo: <span class="text-yellow-300">P</span> portiere, <span class="text-emerald-300">D</span> difensore, <span class="text-sky-300">C</span> centrocampista, <span class="text-rose-300">A</span> attaccante.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
+
+      <!-- Team card template x8 -->
+      <div class="rounded-2xl border border-line bg-surface p-5 flex flex-col">
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <span class="w-11 h-11 rounded-full bg-emerald-700 flex items-center justify-center text-sm font-bold text-white shrink-0">TS</span>
+            <div>
+              <h3 class="font-display text-xl tracking-wide leading-none">Toro Scatenato</h3>
+              <p class="text-xs text-muted mt-1">Presidente: Marco Ferrari</p>
+            </div>
+          </div>
+          <span class="text-[11px] font-mono px-2 py-1 rounded-md bg-surface2 text-muted border border-line">3-4-3</span>
+        </div>
+
+        <div class="flex flex-col gap-1.5 mb-4">
+          <div class="flex items-center gap-2 text-sm py-1">
+            <span class="w-6 h-6 shrink-0 rounded-md bg-yellow-500/15 text-yellow-300 text-[10px] font-bold flex items-center justify-center ring-1 ring-yellow-500/30">P</span>
+            <span class="flex-1">Rizzo</span>
+            <span class="font-mono text-xs text-muted">12 cr</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm py-1">
+            <span class="w-6 h-6 shrink-0 rounded-md bg-emerald-500/15 text-emerald-300 text-[10px] font-bold flex items-center justify-center ring-1 ring-emerald-500/30">D</span>
+            <span class="flex-1">Costa</span>
+            <span class="font-mono text-xs text-muted">18 cr</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm py-1">
+            <span class="w-6 h-6 shrink-0 rounded-md bg-sky-500/15 text-sky-300 text-[10px] font-bold flex items-center justify-center ring-1 ring-sky-500/30">C</span>
+            <span class="flex-1">Fontana</span>
+            <span class="font-mono text-xs text-muted">28 cr</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm py-1">
+            <span class="w-6 h-6 shrink-0 rounded-md bg-rose-500/15 text-rose-300 text-[10px] font-bold flex items-center justify-center ring-1 ring-rose-500/30">A</span>
+            <span class="flex-1 flex items-center gap-1.5">Barbieri <svg class="w-3.5 h-3.5 text-gold" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1l2.6 5.9 6.4.6-4.8 4.3 1.4 6.2L10 14.9l-5.6 3.1 1.4-6.2L1 7.5l6.4-.6z"/></svg></span>
+            <span class="font-mono text-xs text-muted">54 cr</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm py-1">
+            <span class="w-6 h-6 shrink-0 rounded-md bg-rose-500/15 text-rose-300 text-[10px] font-bold flex items-center justify-center ring-1 ring-rose-500/30">A</span>
+            <span class="flex-1">Leone</span>
+            <span class="font-mono text-xs text-muted">41 cr</span>
+          </div>
+        </div>
+
+        <div class="mt-auto pt-3 border-t border-line flex items-center justify-between text-xs">
+          <span class="text-muted">Valore rosa</span>
+          <span class="font-mono text-lime font-semibold">487 cr</span>
+        </div>
+      </div>
+
+      <div class="rounded-2xl border border-line bg-surface p-5 flex flex-col">
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <span class="w-11 h-11 rounded-full bg-sky-700 flex items-center justify-center text-sm font-bold text-white shrink-0">RD</span>
+            <div>
+              <h3 class="font-display text-xl tracking-wide leading-none">Real Divano FC</h3>
+              <p class="text-xs text-muted mt-1">Presidente: Luca Bianchi</p>
+            </div>
+          </div>
+          <span class="text-[11px] font-mono px-2 py-1 rounded-md bg-surface2 text-muted border border-line">4-3-3</span>
+        </div>
+
+        <div class="flex flex-col gap-1.5 mb-4">
+          <div class="flex items-center gap-2 text-sm py-1">
+            <span class="w-6 h-6 shrink-0 rounded-md bg-yellow-500/15 text-yellow-300 text-[10px] font-bold flex items-center justify-center ring-1 ring-yellow-500/30">P</span>
+            <span class="flex-1 flex items-center gap-1.5">Gallo <svg class="w-3.5 h-3.5 text-gold" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1l2.6 5.9 6.4.6-4.8 4.3 1.4 6.2L10 14.9l-5.6 3.1 1.4-6.2L1 7.5l6.4-.6z"/></svg></span>
+            <span class="font-mono text-xs text-muted">15 cr</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm py-1">
+            <span class="w-6 h-6 shrink-0 rounded-md bg-emerald-500/15 text-emerald-300 text-[10px] font-bold flex items-center justify-center ring-1 ring-emerald-500/30">D</span>
+            <span class="flex-1">Moretti</span>
+            <span class="font-mono text-xs text-muted">22 cr</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm py-1">
+            <span class="w-6 h-6 shrink-0 rounded-md bg-emerald-500/15 text-emerald-300 text-[10px] font-bold flex items-center justify-center ring-1 ring-emerald-500/30">D</span>
+            <span class="flex-1">Santoro</span>
+            <span class="font-mono text-xs text-muted">16 cr</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm py-1">
+            <span class="w-6 h-6 shrink-0 rounded-md bg-sky-500/15 text-sky-300 text-[10px] font-bold flex items-center justify-center ring-1 ring-sky-500/30">C</span>
+            <span class="flex-1">Mariani</span>
+            <span class="font-mono text-xs text-muted">31 cr</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm py-1">
+            <span class="w-6 h-6 shrink-0 rounded-md bg-rose-500/15 text-rose-300 text-[10px] font-bold flex items-center justify-center ring-1 ring-rose-500/30">A</span>
+            <span class="flex-1">Caruso</span>
+            <span class="font-mono text-xs text-muted">47 cr</span>
+          </div>
+        </div>
+
+        <div class="mt-auto pt-3 border-t border-line flex items-center justify-between text-xs">
+          <span class="text-muted">Valore rosa</span>
+          <span class="font-mono text-lime font-semibold">465 cr</span>
+        </div>
+      </div>
+
+      <div class="rounded-2xl border border-line bg-surface p-5 flex flex-col">
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <span class="w-11 h-11 rounded-full bg-rose-700 flex items-center justify-center text-sm font-bold text-white shrink-0">BQ</span>
+            <div>
+              <h3 class="font-display text-xl tracking-wide leading-none">Bomber di Quartiere</h3>
+              <p class="text-xs text-muted mt-1">Presidente: Davide Russo</p>
+            </div>
+          </div>
+          <span class="text-[11px] font-mono px-2 py-1 rounded-md bg-surface2 text-muted border border-line">4-4-2</span>
+        </div>
+
+        <div class="flex flex-col gap-1.5 mb-4">
+          <div class="flex items-center gap-2 text-sm py-1">
+            <span class="w-6 h-6 shrink-0 rounded-md bg-yellow-500/15 text-yellow-300 text-[10px] font-bold flex items-center justify-center ring-1 ring-yellow-500/30">P</span>
+            <span class="flex-1">Ferrara</span>
+            <span class="font-mono text-xs text-muted">10 cr</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm py-1">
+            <span class="w-6 h-6 shrink-0 rounded-md bg-emerald-500/15 text-emerald-300 text-[10px] font-bold flex items-center justify-center ring-1 ring-emerald-500/30">D</span>
+            <span class="flex-1">Galli</span>
+            <span class="font-mono text-xs text-muted">14 cr</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm py-1">
+            <span class="w-6 h-6 shrink-0 rounded-md bg-sky-500/15 text-sky-300 text-[10px] font-bold flex items-center justify-center ring-1 ring-sky-500/30">C</span>
+            <span class="flex-1">Martini</span>
+            <span class="font-mono text-xs text-muted">26 cr</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm py-1">
+            <span class="w-6 h-6 shrink-0 rounded-md bg-rose-500/15 text-rose-300 text-[10px] font-bold flex items-center justify-center ring-1 ring-rose-500/30">A</span>
+            <span class="flex-1 flex items-center gap-1.5">Longo <svg class="w-3.5 h-3.5 text-gold" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1l2.6 5.9 6.4.6-4.8 4.3 1.4 6.2L10 14.9l-5.6 3.1 1.4-6.2L1 7.5l6.4-.6z"/></svg></span>
+            <span class="font-mono text-xs text-muted">58 cr</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm py-1">
+            <span class="w-6 h-6 shrink-0 rounded-md bg-rose-500/15 text-rose-300 text-[10px] font-bold flex items-center justify-center ring-1 ring-rose-500/30">A</span>
+            <span class="flex-1">Gentile</span>
+            <span class="font-mono text-xs text-muted">39 cr</span>
+          </div>
+        </div>
+
+        <div class="mt-auto pt-3 border-t border-line flex items-center justify-between text-xs">
+          <span class="text-muted">Valore rosa</span>
+          <span class="font-mono text-lime font-semibold">472 cr</span>
+        </div>
+      </div>
+
+      <div class="rounded-2xl border border-line bg-surface p-5 flex flex-col">
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <span class="w-11 h-11 rounded-full bg-amber-700 flex items-center justify-center text-sm font-bold text-white shrink-0">LB</span>
+            <div>
+              <h3 class="font-display text-xl tracking-wide leading-none">I Leoni da Bar</h3>
+              <p class="text-xs text-muted mt-1">Presidente: Simone Conti</p>
+            </div>
+          </div>
+          <span class="text-[11px] font-mono px-2 py-1 rounded-md bg-surface2 text-muted border border-line">3-5-2</span>
+        </div>
+
+        <div class="flex flex-col gap-1.5 mb-4">
+          <div class="flex items-center gap-2 text-sm py-1">
+            <span class="w-6 h-6 shrink-0 rounded-md bg-yellow-500/15 text-yellow-300 text-[10px] font-bold flex items-center justify-center ring-1 ring-yellow-500/30">P</span>
+            <span class="flex-1">Martinelli</span>
+            <span class="font-mono text-xs text-muted">9 cr</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm py-1">
+            <span class="w-6 h-6 shrink-0 rounded-md bg-emerald-500/15 text-emerald-300 text-[10px] font-bold flex items-center justify-center ring-1 ring-emerald-500/30">D</span>
+            <span class="flex-1">Vitale</span>
+            <span class="font-mono text-xs text-muted">19 cr</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm py-1">
+            <span class="w-6 h-6 shrink-0 rounded-md bg-sky-500/15 text-sky-300 text-[10px] font-bold flex items-center justify-center ring-1 ring-sky-500/30">C</span>
+            <span class="flex-1 flex items-center gap-1.5">Lombardi <svg class="w-3.5 h-3.5 text-gold" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1l2.6 5.9 6.4.6-4.8 4.3 1.4 6.2L10 14.9l-5.6 3.1 1.4-6.2L1 7.5l6.4-.6z"/></svg></span>
+            <span class="font-mono text-xs text-muted">33 cr</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm py-1">
+            <span class="w-6 h-6 shrink-0 rounded-md bg-sky-500/15 text-sky-300 text-[10px] font-bold flex items-center justify-center ring-1 ring-sky-500/30">C</span>
+            <span class="flex-1">Serra</span>
+            <span class="font-mono text-xs text-muted">21 cr</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm py-1">
+            <span class="w-6 h-6 shrink-0 rounded-md bg-rose-500/15 text-rose-300 text-[10px] font-bold flex items-center justify-center ring-1 ring-rose-500/30">A</span>
+            <span class="flex-1">Coppola</span>
+            <span class="font-mono text-xs text-muted">36 cr</span>
+          </div>
+        </div>
+
+        <div class="mt-auto pt-3 border-t border-line flex items-center justify-between text-xs">
+          <span class="text-muted">Valore rosa</span>
+          <span class="font-mono text-lime font-semibold">451 cr</span>
+        </div>
+      </div>
+
+      <div class="rounded-2xl border border-line bg-surface p-5 flex flex-col">
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <span class="w-11 h-11 rounded-full bg-violet-700 flex items-center justify-center text-sm font-bold text-white shrink-0">PU</span>
+            <div>
+              <h3 class="font-display text-xl tracking-wide leading-none">Pallonari United</h3>
+              <p class="text-xs text-muted mt-1">Presidente: Andrea Greco</p>
+            </div>
+          </div>
+          <span class="text-[11px] font-mono px-2 py-1 rounded-md bg-surface2 text-muted border border-line">4-4-2</span>
+        </div>
+
+        <div class="flex flex-col gap-1.5 mb-4">
+          <div class="flex items-center gap-2 text-sm py-1">
+            <span class="w-6 h-6 shrink-0 rounded-md bg-yellow-500/15 text-yellow-300 text-[10px] font-bold flex items-center justify-center ring-1 ring-yellow-500/30">P</span>
+            <span class="flex-1">Marchetti</span>
+            <span class="font-mono text-xs text-muted">11 cr</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm py-1">
+            <span class="w-6 h-6 shrink-0 rounded-md bg-emerald-500/15 text-emerald-300 text-[10px] font-bold flex items-center justify-center ring-1 ring-emerald-500/30">D</span>
+            <span class="flex-1">De Santis</span>
+            <span class="font-mono text-xs text-muted">17 cr</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm py-1">
+            <span class="w-6 h-6 shrink-0 rounded-md bg-sky-500/15 text-sky-300 text-[10px] font-bold flex items-center justify-center ring-1 ring-sky-500/30">C</span>
+            <span class="flex-1">D'Angelo</span>
+            <span class="font-mono text-xs text-muted">24 cr</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm py-1">
+            <span class="w-6 h-6 shrink-0 rounded-md bg-rose-500/15 text-rose-300 text-[10px] font-bold flex items-center justify-center ring-1 ring-rose-500/30">A</span>
+            <span class="flex-1 flex items-center gap-1.5">Farina <svg class="w-3.5 h-3.5 text-gold" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1l2.6 5.9 6.4.6-4.8 4.3 1.4 6.2L10 14.9l-5.6 3.1 1.4-6.2L1 7.5l6.4-.6z"/></svg></span>
+            <span class="font-mono text-xs text-muted">45 cr</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm py-1">
+            <span class="w-6 h-6 shrink-0 rounded-md bg-rose-500/15 text-rose-300 text-[10px] font-bold flex items-center justify-center ring-1 ring-rose-500/30">A</span>
+            <span class="flex-1">Sanna</span>
+            <span class="font-mono text-xs text-muted">30 cr</span>
+          </div>
+        </div>
+
+        <div class="mt-auto pt-3 border-t border-line flex items-center justify-between text-xs">
+          <span class="text-muted">Valore rosa</span>
+          <span class="font-mono text-lime font-semibold">438 cr</span>
+        </div>
+      </div>
+
+      <div class="rounded-2xl border border-line bg-surface p-5 flex flex-col">
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <span class="w-11 h-11 rounded-full bg-orange-700 flex items-center justify-center text-sm font-bold text-white shrink-0">UL</span>
+            <div>
+              <h3 class="font-display text-xl tracking-wide leading-none">Ultras del Lunedì</h3>
+              <p class="text-xs text-muted mt-1">Presidente: Fabio Marino</p>
+            </div>
+          </div>
+          <span class="text-[11px] font-mono px-2 py-1 rounded-md bg-surface2 text-muted border border-line">3-4-3</span>
+        </div>
+
+        <div class="flex flex-col gap-1.5 mb-4">
+          <div class="flex items-center gap-2 text-sm py-1">
+            <span class="w-6 h-6 shrink-0 rounded-md bg-yellow-500/15 text-yellow-300 text-[10px] font-bold flex items-center justify-center ring-1 ring-yellow-500/30">P</span>
+            <span class="flex-1">Monti</span>
+            <span class="font-mono text-xs text-muted">8 cr</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm py-1">
+            <span class="w-6 h-6 shrink-0 rounded-md bg-emerald-500/15 text-emerald-300 text-[10px] font-bold flex items-center justify-center ring-1 ring-emerald-500/30">D</span>
+            <span class="flex-1">Grasso</span>
+            <span class="font-mono text-xs text-muted">13 cr</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm py-1">
+            <span class="w-6 h-6 shrink-0 rounded-md bg-sky-500/15 text-sky-300 text-[10px] font-bold flex items-center justify-center ring-1 ring-sky-500/30">C</span>
+            <span class="flex-1 flex items-center gap-1.5">Rinaldi <svg class="w-3.5 h-3.5 text-gold" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1l2.6 5.9 6.4.6-4.8 4.3 1.4 6.2L10 14.9l-5.6 3.1 1.4-6.2L1 7.5l6.4-.6z"/></svg></span>
+            <span class="font-mono text-xs text-muted">27 cr</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm py-1">
+            <span class="w-6 h-6 shrink-0 rounded-md bg-rose-500/15 text-rose-300 text-[10px] font-bold flex items-center justify-center ring-1 ring-rose-500/30">A</span>
+            <span class="flex-1">Ricci</span>
+            <span class="font-mono text-xs text-muted">42 cr</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm py-1">
+            <span class="w-6 h-6 shrink-0 rounded-md bg-rose-500/15 text-rose-300 text-[10px] font-bold flex items-center justify-center ring-1 ring-rose-500/30">A</span>
+            <span class="flex-1">Esposito</span>
+            <span class="font-mono text-xs text-muted">33 cr</span>
+          </div>
+        </div>
+
+        <div class="mt-auto pt-3 border-t border-line flex items-center justify-between text-xs">
+          <span class="text-muted">Valore rosa</span>
+          <span class="font-mono text-lime font-semibold">419 cr</span>
+        </div>
+      </div>
+
+      <div class="rounded-2xl border border-line bg-surface p-5 flex flex-col">
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <span class="w-11 h-11 rounded-full bg-teal-700 flex items-center justify-center text-sm font-bold text-white shrink-0">AU</span>
+            <div>
+              <h3 class="font-display text-xl tracking-wide leading-none">Attila e i suoi Unni</h3>
+              <p class="text-xs text-muted mt-1">Presidente: Giacomo Villa</p>
+            </div>
+          </div>
+          <span class="text-[11px] font-mono px-2 py-1 rounded-md bg-surface2 text-muted border border-line">4-3-3</span>
+        </div>
+
+        <div class="flex flex-col gap-1.5 mb-4">
+          <div class="flex items-center gap-2 text-sm py-1">
+            <span class="w-6 h-6 shrink-0 rounded-md bg-yellow-500/15 text-yellow-300 text-[10px] font-bold flex items-center justify-center ring-1 ring-yellow-500/30">P</span>
+            <span class="flex-1">Romano</span>
+            <span class="font-mono text-xs text-muted">7 cr</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm py-1">
+            <span class="w-6 h-6 shrink-0 rounded-md bg-emerald-500/15 text-emerald-300 text-[10px] font-bold flex items-center justify-center ring-1 ring-emerald-500/30">D</span>
+            <span class="flex-1">Colombo</span>
+            <span class="font-mono text-xs text-muted">12 cr</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm py-1">
+            <span class="w-6 h-6 shrink-0 rounded-md bg-sky-500/15 text-sky-300 text-[10px] font-bold flex items-center justify-center ring-1 ring-sky-500/30">C</span>
+            <span class="flex-1">Verdi</span>
+            <span class="font-mono text-xs text-muted">20 cr</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm py-1">
+            <span class="w-6 h-6 shrink-0 rounded-md bg-rose-500/15 text-rose-300 text-[10px] font-bold flex items-center justify-center ring-1 ring-rose-500/30">A</span>
+            <span class="flex-1 flex items-center gap-1.5">Ferrari G. <svg class="w-3.5 h-3.5 text-gold" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1l2.6 5.9 6.4.6-4.8 4.3 1.4 6.2L10 14.9l-5.6 3.1 1.4-6.2L1 7.5l6.4-.6z"/></svg></span>
+            <span class="font-mono text-xs text-muted">29 cr</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm py-1">
+            <span class="w-6 h-6 shrink-0 rounded-md bg-rose-500/15 text-rose-300 text-[10px] font-bold flex items-center justify-center ring-1 ring-rose-500/30">A</span>
+            <span class="flex-1">Bruno</span>
+            <span class="font-mono text-xs text-muted">18 cr</span>
+          </div>
+        </div>
+
+        <div class="mt-auto pt-3 border-t border-line flex items-center justify-between text-xs">
+          <span class="text-muted">Valore rosa</span>
+          <span class="font-mono text-lime font-semibold">397 cr</span>
+        </div>
+      </div>
+
+      <div class="rounded-2xl border border-line bg-surface p-5 flex flex-col">
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <span class="w-11 h-11 rounded-full bg-fuchsia-700 flex items-center justify-center text-sm font-bold text-white shrink-0">SR</span>
+            <div>
+              <h3 class="font-display text-xl tracking-wide leading-none">Sfigatti Rovesciati</h3>
+              <p class="text-xs text-muted mt-1">Presidente: Matteo De Luca</p>
+            </div>
+          </div>
+          <span class="text-[11px] font-mono px-2 py-1 rounded-md bg-surface2 text-muted border border-line">3-4-3</span>
+        </div>
+
+        <div class="flex flex-col gap-1.5 mb-4">
+          <div class="flex items-center gap-2 text-sm py-1">
+            <span class="w-6 h-6 shrink-0 rounded-md bg-yellow-500/15 text-yellow-300 text-[10px] font-bold flex items-center justify-center ring-1 ring-yellow-500/30">P</span>
+            <span class="flex-1">Fabbri</span>
+            <span class="font-mono text-xs text-muted">6 cr</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm py-1">
+            <span class="w-6 h-6 shrink-0 rounded-md bg-emerald-500/15 text-emerald-300 text-[10px] font-bold flex items-center justify-center ring-1 ring-emerald-500/30">D</span>
+            <span class="flex-1">Testa</span>
+            <span class="font-mono text-xs text-muted">9 cr</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm py-1">
+            <span class="w-6 h-6 shrink-0 rounded-md bg-sky-500/15 text-sky-300 text-[10px] font-bold flex items-center justify-center ring-1 ring-sky-500/30">C</span>
+            <span class="flex-1 flex items-center gap-1.5">Pellegrini <svg class="w-3.5 h-3.5 text-gold" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1l2.6 5.9 6.4.6-4.8 4.3 1.4 6.2L10 14.9l-5.6 3.1 1.4-6.2L1 7.5l6.4-.6z"/></svg></span>
+            <span class="font-mono text-xs text-muted">19 cr</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm py-1">
+            <span class="w-6 h-6 shrink-0 rounded-md bg-rose-500/15 text-rose-300 text-[10px] font-bold flex items-center justify-center ring-1 ring-rose-500/30">A</span>
+            <span class="flex-1">Bianco</span>
+            <span class="font-mono text-xs text-muted">22 cr</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm py-1">
+            <span class="w-6 h-6 shrink-0 rounded-md bg-rose-500/15 text-rose-300 text-[10px] font-bold flex items-center justify-center ring-1 ring-rose-500/30">A</span>
+            <span class="flex-1">Neri</span>
+            <span class="font-mono text-xs text-muted">15 cr</span>
+          </div>
+        </div>
+
+        <div class="mt-auto pt-3 border-t border-line flex items-center justify-between text-xs">
+          <span class="text-muted">Valore rosa</span>
+          <span class="font-mono text-lime font-semibold">371 cr</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= ALBO D'ORO ================= -->
+  <section id="tab-albodoro" class="tab-panel hidden">
+    <div class="mb-8">
+      <p class="text-lime text-xs font-mono uppercase tracking-[0.25em] mb-1">Dal 2021 a oggi</p>
+      <h1 class="font-display text-5xl tracking-wide">ALBO D'ORO</h1>
+      <p class="text-muted mt-2 max-w-xl">Cinque stagioni, cinque squadre diverse sul trono: è ufficialmente la lega più equilibrata (e litigiosa) del quartiere.</p>
+    </div>
+
+    <div class="relative pl-8 sm:pl-10">
+      <div class="absolute left-3 sm:left-4 top-2 bottom-2 w-px bg-line"></div>
+
+      <div class="relative mb-8">
+        <div class="absolute -left-8 sm:-left-10 top-1 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gold/15 ring-2 ring-gold flex items-center justify-center">
+          <svg class="w-3.5 h-3.5 text-gold" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1l2.6 5.9 6.4.6-4.8 4.3 1.4 6.2L10 14.9l-5.6 3.1 1.4-6.2L1 7.5l6.4-.6z"/></svg>
+        </div>
+        <div class="rounded-2xl border border-gold/30 bg-surface p-5">
+          <div class="flex items-center justify-between mb-1">
+            <span class="font-mono text-gold text-sm">2025/26</span>
+            <span class="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-gold/10 text-gold border border-gold/30">Campione uscente</span>
+          </div>
+          <h3 class="font-display text-2xl tracking-wide">Real Divano FC</h3>
+          <p class="text-sm text-muted">Presidente: Luca Bianchi</p>
+          <p class="text-sm text-ink/80 mt-2">Rimonta memorabile nelle ultime cinque giornate: dal quarto posto allo scudetto.</p>
+        </div>
+      </div>
+
+      <div class="relative mb-8">
+        <div class="absolute -left-8 sm:-left-10 top-1 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-surface2 ring-2 ring-line flex items-center justify-center">
+          <svg class="w-3.5 h-3.5 text-muted" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1l2.6 5.9 6.4.6-4.8 4.3 1.4 6.2L10 14.9l-5.6 3.1 1.4-6.2L1 7.5l6.4-.6z"/></svg>
+        </div>
+        <div class="rounded-2xl border border-line bg-surface p-5">
+          <span class="font-mono text-muted text-sm">2024/25</span>
+          <h3 class="font-display text-2xl tracking-wide mt-1">Toro Scatenato</h3>
+          <p class="text-sm text-muted">Presidente: Marco Ferrari</p>
+          <p class="text-sm text-ink/80 mt-2">Difesa di ferro: zero sconfitte nell'intero girone di ritorno.</p>
+        </div>
+      </div>
+
+      <div class="relative mb-8">
+        <div class="absolute -left-8 sm:-left-10 top-1 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-surface2 ring-2 ring-line flex items-center justify-center">
+          <svg class="w-3.5 h-3.5 text-muted" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1l2.6 5.9 6.4.6-4.8 4.3 1.4 6.2L10 14.9l-5.6 3.1 1.4-6.2L1 7.5l6.4-.6z"/></svg>
+        </div>
+        <div class="rounded-2xl border border-line bg-surface p-5">
+          <span class="font-mono text-muted text-sm">2023/24</span>
+          <h3 class="font-display text-2xl tracking-wide mt-1">Bomber di Quartiere</h3>
+          <p class="text-sm text-muted">Presidente: Davide Russo</p>
+          <p class="text-sm text-ink/80 mt-2">Miglior attacco nella storia della lega: 89 gol fatti in 38 giornate.</p>
+        </div>
+      </div>
+
+      <div class="relative mb-8">
+        <div class="absolute -left-8 sm:-left-10 top-1 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-surface2 ring-2 ring-line flex items-center justify-center">
+          <svg class="w-3.5 h-3.5 text-muted" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1l2.6 5.9 6.4.6-4.8 4.3 1.4 6.2L10 14.9l-5.6 3.1 1.4-6.2L1 7.5l6.4-.6z"/></svg>
+        </div>
+        <div class="rounded-2xl border border-line bg-surface p-5">
+          <span class="font-mono text-muted text-sm">2022/23</span>
+          <h3 class="font-display text-2xl tracking-wide mt-1">I Leoni da Bar</h3>
+          <p class="text-sm text-muted">Presidente: Simone Conti</p>
+          <p class="text-sm text-ink/80 mt-2">Scudetto deciso all'ultima giornata, staccando gli inseguitori di un solo punto.</p>
+        </div>
+      </div>
+
+      <div class="relative">
+        <div class="absolute -left-8 sm:-left-10 top-1 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-surface2 ring-2 ring-line flex items-center justify-center">
+          <svg class="w-3.5 h-3.5 text-muted" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1l2.6 5.9 6.4.6-4.8 4.3 1.4 6.2L10 14.9l-5.6 3.1 1.4-6.2L1 7.5l6.4-.6z"/></svg>
+        </div>
+        <div class="rounded-2xl border border-line bg-surface p-5">
+          <span class="font-mono text-muted text-sm">2021/22</span>
+          <h3 class="font-display text-2xl tracking-wide mt-1">Pallonari United</h3>
+          <p class="text-sm text-muted">Presidente: Andrea Greco</p>
+          <p class="text-sm text-ink/80 mt-2">Stagione fondativa: la prima edizione di FantaAmici, otto squadre e un'amicizia messa a dura prova.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= REGOLAMENTO ================= -->
+  <section id="tab-regolamento" class="tab-panel hidden">
+    <div class="mb-8">
+      <p class="text-lime text-xs font-mono uppercase tracking-[0.25em] mb-1">Approvato dall'assemblea di lega</p>
+      <h1 class="font-display text-5xl tracking-wide">REGOLAMENTO</h1>
+      <p class="text-muted mt-2 max-w-xl">Sei articoli. Nessuna scusa. Apri ogni voce per i dettagli.</p>
+    </div>
+
+    <div class="flex flex-col gap-3 max-w-3xl">
+
+      <details class="group rounded-2xl border border-line bg-surface overflow-hidden" open>
+        <summary class="flex items-center justify-between gap-4 px-5 py-4">
+          <div class="flex items-center gap-3">
+            <span class="font-mono text-lime text-sm">Art. 1</span>
+            <span class="font-semibold">Formazioni e moduli</span>
+          </div>
+          <svg class="chev w-4 h-4 text-muted shrink-0 transition-transform" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M5 7l5 5 5-5"/></svg>
+        </summary>
+        <div class="px-5 pb-5 text-sm text-ink/80 leading-relaxed border-t border-line pt-4">
+          <p class="mb-2">Moduli ammessi: 3-4-3, 3-5-2, 4-3-3, 4-4-2, 4-5-1, 5-3-2, 5-4-1.</p>
+          <p class="mb-2">Invia la formazione entro il sabato alle ore 15:00. Dopo la chiusura non si accettano modifiche, nemmeno "per errore".</p>
+          <p>Formazione non inviata in tempo: resta valida l'ultima schierata, con un malus di -1 al punteggio totale.</p>
+        </div>
+      </details>
+
+      <details class="group rounded-2xl border border-line bg-surface overflow-hidden">
+        <summary class="flex items-center justify-between gap-4 px-5 py-4">
+          <div class="flex items-center gap-3">
+            <span class="font-mono text-lime text-sm">Art. 2</span>
+            <span class="font-semibold">Punteggi: bonus e malus</span>
+          </div>
+          <svg class="chev w-4 h-4 text-muted shrink-0 transition-transform" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M5 7l5 5 5-5"/></svg>
+        </summary>
+        <div class="px-5 pb-5 border-t border-line pt-4">
+          <div class="grid grid-cols-2 gap-x-6 gap-y-2 font-mono text-sm">
+            <div class="flex justify-between"><span class="text-ink/80">Gol segnato</span><span class="text-lime">+3</span></div>
+            <div class="flex justify-between"><span class="text-ink/80">Assist</span><span class="text-lime">+1</span></div>
+            <div class="flex justify-between"><span class="text-ink/80">Rigore parato</span><span class="text-lime">+3</span></div>
+            <div class="flex justify-between"><span class="text-ink/80">Imbattibilità (D, voto ≥6)</span><span class="text-lime">+1</span></div>
+            <div class="flex justify-between"><span class="text-ink/80">Rigore sbagliato</span><span class="text-rose-400">-3</span></div>
+            <div class="flex justify-between"><span class="text-ink/80">Autogol</span><span class="text-rose-400">-2</span></div>
+            <div class="flex justify-between"><span class="text-ink/80">Gol subito (P)</span><span class="text-rose-400">-1</span></div>
+            <div class="flex justify-between"><span class="text-ink/80">Espulsione</span><span class="text-rose-400">-1</span></div>
+            <div class="flex justify-between"><span class="text-ink/80">Ammonizione</span><span class="text-rose-400">-0.5</span></div>
+          </div>
+        </div>
+      </details>
+
+      <details class="group rounded-2xl border border-line bg-surface overflow-hidden">
+        <summary class="flex items-center justify-between gap-4 px-5 py-4">
+          <div class="flex items-center gap-3">
+            <span class="font-mono text-lime text-sm">Art. 3</span>
+            <span class="font-semibold">Mercato e riparazioni</span>
+          </div>
+          <svg class="chev w-4 h-4 text-muted shrink-0 transition-transform" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M5 7l5 5 5-5"/></svg>
+        </summary>
+        <div class="px-5 pb-5 text-sm text-ink/80 leading-relaxed border-t border-line pt-4">
+          <p class="mb-2">Budget iniziale: 500 crediti per squadra, assegnati all'asta di lega prima dell'inizio stagione.</p>
+          <p class="mb-2">Finestre di riparazione: fine agosto e fine gennaio. Rosa massima 25 giocatori, minimo 3 portieri.</p>
+          <p>Le aste si svolgono al rialzo, un giocatore alla volta, con base d'asta minima di 1 credito.</p>
+        </div>
+      </details>
+
+      <details class="group rounded-2xl border border-line bg-surface overflow-hidden">
+        <summary class="flex items-center justify-between gap-4 px-5 py-4">
+          <div class="flex items-center gap-3">
+            <span class="font-mono text-lime text-sm">Art. 4</span>
+            <span class="font-semibold">Sostituzioni e panchina</span>
+          </div>
+          <svg class="chev w-4 h-4 text-muted shrink-0 transition-transform" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M5 7l5 5 5-5"/></svg>
+        </summary>
+        <div class="px-5 pb-5 text-sm text-ink/80 leading-relaxed border-t border-line pt-4">
+          <p class="mb-2">Sono ammessi fino a 3 cambi a partita, solo tra giocatori dello stesso ruolo o con modulo compatibile.</p>
+          <p>La regola del "6 politico" è opzionale: si attiva solo con voto unanime dei presidenti a inizio stagione.</p>
+        </div>
+      </details>
+
+      <details class="group rounded-2xl border border-line bg-surface overflow-hidden">
+        <summary class="flex items-center justify-between gap-4 px-5 py-4">
+          <div class="flex items-center gap-3">
+            <span class="font-mono text-lime text-sm">Art. 5</span>
+            <span class="font-semibold">Fair play e condotta</span>
+          </div>
+          <svg class="chev w-4 h-4 text-muted shrink-0 transition-transform" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M5 7l5 5 5-5"/></svg>
+        </summary>
+        <div class="px-5 pb-5 text-sm text-ink/80 leading-relaxed border-t border-line pt-4">
+          <p class="mb-2">Rispetta le scadenze di formazione e mercato: chi salta ripetutamente rischia l'esclusione dalla lega.</p>
+          <p class="mb-2">Un solo account per persona. Niente prestanome, niente doppie squadre.</p>
+          <p>Le decisioni del Presidente di Lega sono definitive, salvo ricorso scritto entro 48 ore dalla comunicazione.</p>
+        </div>
+      </details>
+
+      <details class="group rounded-2xl border border-line bg-surface overflow-hidden">
+        <summary class="flex items-center justify-between gap-4 px-5 py-4">
+          <div class="flex items-center gap-3">
+            <span class="font-mono text-lime text-sm">Art. 6</span>
+            <span class="font-semibold">Vittoria dello scudetto</span>
+          </div>
+          <svg class="chev w-4 h-4 text-muted shrink-0 transition-transform" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M5 7l5 5 5-5"/></svg>
+        </summary>
+        <div class="px-5 pb-5 text-sm text-ink/80 leading-relaxed border-t border-line pt-4">
+          <p class="mb-2">Vince la squadra prima in classifica al termine delle 38 giornate.</p>
+          <p>In caso di parità di punti si guarda, in ordine: differenza reti, gol fatti, scontro diretto.</p>
+        </div>
+      </details>
+
+    </div>
+  </section>
+
+</main>
+
+<footer class="border-t border-line">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-muted">
+    <p>FantaAmici © Stagione 2026/27 — otto amici, un solo scudetto.</p>
+    <p class="font-mono">Ultimo aggiornamento: giornata 5</p>
+  </div>
+</footer>
+
+<script>
+  const tabButtons = document.querySelectorAll('.tab-btn');
+  const panels = document.querySelectorAll('.tab-panel');
+
+  function activateTab(tab) {
+    panels.forEach(p => p.classList.toggle('hidden', p.id !== `tab-${tab}`));
+    tabButtons.forEach(b => {
+      const isActive = b.dataset.tab === tab;
+      b.classList.toggle('active-tab', isActive);
+    });
+  }
+
+  tabButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      activateTab(btn.dataset.tab);
+      mobileMenu.classList.add('hidden');
+      iconMenu.classList.remove('hidden');
+      iconClose.classList.add('hidden');
+      menuToggle.setAttribute('aria-expanded', 'false');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+
+  const menuToggle = document.getElementById('menu-toggle');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const iconMenu = document.getElementById('icon-menu');
+  const iconClose = document.getElementById('icon-close');
+
+  menuToggle.addEventListener('click', () => {
+    const isOpen = !mobileMenu.classList.contains('hidden');
+    mobileMenu.classList.toggle('hidden');
+    iconMenu.classList.toggle('hidden', !isOpen);
+    iconClose.classList.toggle('hidden', isOpen);
+    menuToggle.setAttribute('aria-expanded', String(!isOpen));
+  });
+</script>
+
+<style>
+  .tab-btn { color: #8CA097; }
+  .tab-btn:hover { color: #E9F2EC; }
+  .tab-btn.active-tab {
+    background-color: #1B2620;
+    color: #9AFF6E;
+    box-shadow: inset 0 0 0 1px rgba(47,143,82,0.5);
+  }
+</style>
+
+</body>
+</html>
