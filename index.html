@@ -821,7 +821,7 @@
             <div class="flex justify-between"><span class="text-ink/80">Gol segnato</span><span class="text-lime">+3</span></div>
             <div class="flex justify-between"><span class="text-ink/80">Assist</span><span class="text-lime">+1</span></div>
             <div class="flex justify-between"><span class="text-ink/80">Rigore parato</span><span class="text-lime">+3</span></div>
-            <div class="flex justify-between"><span class="text-ink/80">Imbattibilità (D, voto ≥6)</span><span class="text-lime">+1</span></div>
+            <div class="flex justify-between"><span class="text-ink/80">Imbattibilità portiere</span><span class="text-lime">+1</span></div>
             <div class="flex justify-between"><span class="text-ink/80">Rigore sbagliato</span><span class="text-rose-400">-3</span></div>
             <div class="flex justify-between"><span class="text-ink/80">Autogol</span><span class="text-rose-400">-2</span></div>
             <div class="flex justify-between"><span class="text-ink/80">Gol subito (P)</span><span class="text-rose-400">-1</span></div>
@@ -840,8 +840,8 @@
           <svg class="chev w-4 h-4 text-muted shrink-0 transition-transform" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M5 7l5 5 5-5"/></svg>
         </summary>
         <div class="px-5 pb-5 text-sm text-ink/80 leading-relaxed border-t border-line pt-4">
-          <p class="mb-2">Budget iniziale: 500 crediti per squadra, assegnati all'asta di lega prima dell'inizio stagione.</p>
-          <p class="mb-2">Finestre di riparazione: fine agosto e fine gennaio. Rosa massima 25 giocatori, minimo 3 portieri.</p>
+          <p class="mb-2">Budget iniziale: 1000 crediti per squadra, assegnati all'asta di lega prima dell'inizio stagione.</p>
+          <p class="mb-2">Finestre di riparazione: inizi di febbraio (mercato trasferimenti serie A chiuso). Rosa massima 25 giocatori.</p>
           <p>Le aste si svolgono al rialzo, un giocatore alla volta, con base d'asta minima di 1 credito.</p>
         </div>
       </details>
@@ -850,12 +850,60 @@
         <summary class="flex items-center justify-between gap-4 px-5 py-4">
           <div class="flex items-center gap-3">
             <span class="font-mono text-lime text-sm">Art. 4</span>
-            <span class="font-semibold">Sostituzioni e panchina</span>
+            <span class="font-semibold">Mercato trasferimenti</span>
           </div>
           <svg class="chev w-4 h-4 text-muted shrink-0 transition-transform" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M5 7l5 5 5-5"/></svg>
         </summary>
         <div class="px-5 pb-5 text-sm text-ink/80 leading-relaxed border-t border-line pt-4">
-          <p class="mb-2">Sono ammessi fino a 3 cambi a partita, solo tra giocatori dello stesso ruolo o con modulo compatibile.</p>
+          <p class="mb-2">Apertura e Chiusura: coincide con il periodo trasferimenti della serie A, quindi: 1
+gennaio-31 gennaio, 1 luglio-1 settembre, escluso il periodo dell’asta (settimana dell’asta).
+● Slot e Scambi: Non si possono in alcun caso superare i 25 giocatori in rosa. Chi
+acquista un giocatore tramite scambio avendo 0 slot liberi deve obbligatoriamente
+svincolare un componente della rosa per liberare lo slot, rinunciando a tutti i crediti
+associati a quel giocatore. Si può invece avere meno di 25 giocatori, per un massimo
+di 22 giocatori, 4 slot divisi per ruolo (2 portieri, 7 difensori, 7 centrocampisti e 5
+attaccanti). Oltre scatta penalità in classifica. Se notiamo che prendete apposta
+penalità per ricevere i crediti extra arrivando ultimi perdete il vantaggio dei crediti.
+● Trattative con Conguagli: Sono permessi scambi di cartellini in cui si inseriscono
+Fanta-Milioni (fm) come contropartita economica. I crediti scambiati vengono
+immediatamente stornati o aggiunti ai rispettivi bilanci.
+● Prestiti Secchi: Sono consentiti prestiti "secchi" di giocatori (con ritorno automatico alla
+squadra proprietaria a fine anno).
+● Prestito con diritto/obbligo di riscatto: Il valore minimo fissato per il riscatto deve essere
+almeno pari al valore di acquisto originario del giocatore (successivamente le parti possono
+trattare al rialzo).
+● In caso di Obbligo di riscatto, la squadra acquirente DEVE obbligatoriamente confermare
+il giocatore per l'anno successivo, pagando la cifra di riscatto pattuita maggiorata del
+20% (se si tratta del primo anno, poi 25% secondo anno e 30% terzo anno) previsto per
+le riconferme (Es. Giocatore pagato 100, prestato con obbligo a 120 -> costo di
+riconferma per l'anno successivo: 120 + 20%).
+● In caso di Diritto di riscatto, la squadra decide a fine stagione se esercitarlo o meno. In
+caso di non riconferma, il giocatore torna alla squadra originaria che decide se
+confermarlo o meno come da prassi. Se la squadra originaria non ha slot nei 25 liberi, il
+giocatore verrà automaticamente svincolato senza ricevere indietro i crediti.
+● Clausola Anti-Dumping (Voto Lega): Per evitare comportamenti scorretti o dismissioni
+sospette, ogni operazione deve essere ratificata a maggioranza (voto obbligatorio: 1 per
+squadra). Operazioni palesemente falsate saranno bloccate. Sanzione in caso di accordi
+sottobanco: fino a 12 punti di penalizzazione.
+● I crediti scambiati nelle trattative vengono stornati/aggiunti immediatamente ai rispettivi
+bilanci.
+● Iniezione di Crediti (Sessione Invernale): Per animare il mercato di riparazione e coprire le
+esigenze di rosa, a gennaio viene assegnato a tutte le squadre un extra budget fisso pari al
+15% del budget iniziale (es. +150 crediti se il budget base è 1000).
+● Al fine di garantire competitività nel lungo termine, le squadre fuori dal podio
+riceveranno un bonus di crediti da sommare al budget iniziale (1000 fm) dell'asta
+estiva della stagione successiva. La distribuzione segue questo schema di
+riequilibrio. Il diritto a ricevere questo tesoretto extra è strettamente legato
+all'impegno mostrato durante la stagione. Se una squadra non inserisce la
+formazione per più di 3 volte durante l'intero campionato/ coppa (facendo quindi
+scattare la penale economica già prevista dal regolamento - 20 euro, cumulabili dalla
+terza volta in poi), perderà totalmente il diritto a ricevere i crediti bonus per l'anno
+successivo, indipendentemente dal suo piazzamento finale in classifica.
+● 8° classificato: + 150 fm
+● 7° classificato: + 120 fm
+● 6° classificato: + 90 fm
+● 5° classificato: + 60 fm
+● 4° classificato: + 30 fm</p>
           <p>La regola del "6 politico" è opzionale: si attiva solo con voto unanime dei presidenti a inizio stagione.</p>
         </div>
       </details>
@@ -864,14 +912,36 @@
         <summary class="flex items-center justify-between gap-4 px-5 py-4">
           <div class="flex items-center gap-3">
             <span class="font-mono text-lime text-sm">Art. 5</span>
-            <span class="font-semibold">Fair play e condotta</span>
+            <span class="font-semibold">Contratti e conferme pluriennali</span>
           </div>
           <svg class="chev w-4 h-4 text-muted shrink-0 transition-transform" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M5 7l5 5 5-5"/></svg>
         </summary>
         <div class="px-5 pb-5 text-sm text-ink/80 leading-relaxed border-t border-line pt-4">
-          <p class="mb-2">Rispetta le scadenze di formazione e mercato: chi salta ripetutamente rischia l'esclusione dalla lega.</p>
-          <p class="mb-2">Un solo account per persona. Niente prestanome, niente doppie squadre.</p>
-          <p>Le decisioni del Presidente di Lega sono definitive, salvo ricorso scritto entro 48 ore dalla comunicazione.</p>
+          <p class="mb-2">I giocatori acquistati non scadono a fine anno, ma entrano a far parte del patrimonio della
+squadra.</p>
+  <p class="mb-2">Stipendio Base / Costo di Contratto: Il prezzo pagato all'asta (o ereditato via scambio)
+rappresenta l'ingaggio del giocatore. Nelle trattative e negli scambi, il valore del giocatore è
+esclusivamente il suo "Costo di Contratto". Le quotazioni ufficiali Leghe Fantacalcio non
+hanno alcun valore in sede di mercato, ma servono solo come parametro per la sostituzione
+degli infortunati lungodegenti.</p>
+  <p class="mb-2">Riconferme (Retentions): Ogni squadra può effettuare un massimo di 3 riconferme
+all'anno, con il limite temporale massimo di 3 anni per singolo giocatore e un limite di
+1 riconferma per ruolo (1 P, 1 D, 1 C, 1 A).</p>
+
+  <p class="mb-2">Adeguamento Contrattuale: Il costo per trattenere un giocatore per la stagione successiva
+prevede una maggiorazione progressiva calcolata sull'ingaggio dell'anno precedente
+(somma che verrà detratta dal budget d'asta):
+● Anno 1 ad Anno 2: Ingaggio Anno 1 + 20% (minimo +2 crediti, arrotondato per eccesso).
+● Anno 2 ad Anno 3: Ingaggio Anno 2 + 25% (minimo +2 crediti, arrotondato per eccesso).
+● Anno 3 ad Anno 4: Ingaggio Anno 3 + 30% (minimo +3 crediti, arrotondato per eccesso).</p>
+<p class="mb-2">Un singolo giocatore può essere riconfermato per un massimo di 3 stagioni consecutive dalla
+stessa squadra, dopodiché tornerà nella lista svincolati. N.B. Il conteggio degli anni di
+riconferma è nominale e legato al giocatore. In caso di scambio, cessione o prestito, la
+squadra acquirente eredita lo storico delle riconferme del calciatore. Se un giocatore
+raggiunge il limite massimo dei 3 anni (anche sommati tra squadre diverse), a fine
+stagione il suo contratto scade inderogabilmente e deve tornare nella lista degli
+svincolati per l'asta estiva. Nessuna squadra che lo ha posseduto nel triennio potrà
+riacquistarlo tramite scambi pre-asta.</p>
         </div>
       </details>
 
@@ -879,13 +949,48 @@
         <summary class="flex items-center justify-between gap-4 px-5 py-4">
           <div class="flex items-center gap-3">
             <span class="font-mono text-lime text-sm">Art. 6</span>
-            <span class="font-semibold">Vittoria dello scudetto</span>
+            <span class="font-semibold">Settore giovanile - Under21</span>
           </div>
           <svg class="chev w-4 h-4 text-muted shrink-0 transition-transform" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M5 7l5 5 5-5"/></svg>
         </summary>
         <div class="px-5 pb-5 text-sm text-ink/80 leading-relaxed border-t border-line pt-4">
-          <p class="mb-2">Vince la squadra prima in classifica al termine delle 38 giornate.</p>
-          <p>In caso di parità di punti si guarda, in ordine: differenza reti, gol fatti, scontro diretto.</p>
+          <p class="mb-2">Criteri di Eleggibilità U21
+Età: Nati dal 1° gennaio 2005 in poi.
+<p>Presenze: Meno di 15 presenze ufficiali da professionista nei maggiori campionati di prima
+divisione (es. Serie A, Premier League, LaLiga, Bundesliga, Ligue 1). Nota: le presenze in Serie
+B o nelle giovanili non contano.</p>
+<p>Inserimento dei Top U21 nel Listone Principale</p>
+<p>I giocatori Under 21 già affermati in prima divisione (es. con 15 o più presenze) non rientrano
+nel draft giovanile.
+Vengono inseriti nel listone dell'Asta Principale e acquistati con il budget ordinario della Prima
+Squadra.</p>
+<p>Modalità d'Asta U21 e Budget Extra</p>
+<p>Budget Extra: Vengono assegnati 30 crediti extra riservati unicamente ai 3 slot U21.
+Indipendenza: I crediti U21 non spesi vengono persi e non si sommano né al budget dell'Asta
+Principale né all'Asta di Riparazione.</p>
+
+<p>Asta a Busta Chiusa: L'assegnazione avviene tramite offerte segrete inviate agli Admin prima
+dell'asta principale.</p>
+<p>Risoluzione Parità: In caso di parità di offerta per un U21, si procede con un secondo turno di
+buste chiuse (obbligatoriamente al rialzo) limitato esclusivamente alle squadre a pari merito. In
+caso di ulteriore parità, il giocatore viene assegnato alla squadra che ha ottenuto il piazzamento
+peggiore nella classifica della stagione precedente.</p>
+<p>Gli U21 in Primavera non prendono voto. Per poter essere schierati, devono essere promossi in
+prima squadra svincolando obbligatoriamente uno dei 25 titolari già presenti in rosa.
+I giocatori U21 possono essere confermati per un massimo di 3 anni. Se vengono confermati
+per la stagione successiva e inseriti nella rosa titolare, il loro valore nominale a bilancio sarà
+fissato a 1 fm (indipendentemente dalla cifra spesa nell'asta extra a buste chiuse).</p>
+
+<p>Gestione e Promozione della Taxi Squad</p>
+<p>I 3 U21 non portano punteggio finché rimangono nella Taxi Squad.
+Promozione: In qualsiasi finestra di mercato un fantallenatore può promuovere un U21 nei 25 di
+Prima Squadra. Per farlo, deve contestualmente svincolare o cedere un giocatore della Prima
+Squadra.</p>
+<p>Mantenimento: Gli U21 possono essere mantenuti di anno in anno nella Taxi Squad senza
+consumare gli slot di riconferma dei 25, finché mantengono i requisiti d'età, quindi fino al
+compimento dei 22 anni.</p>
+<p>Gli U21 non possono essere scambiati sul mercato ne prestati, a meno che non rientrino nei 25
+giocatori titolari. Possono però essere svincolati prima che inizi l’asta (febbraio/ settembre).</p>
         </div>
       </details>
 
@@ -896,8 +1001,8 @@
 
 <footer class="border-t border-line">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-muted">
-    <p>FantaAmici © Stagione 2026/27 — otto amici, un solo scudetto.</p>
-    <p class="font-mono">Ultimo aggiornamento: giornata 5</p>
+    <p>Bestemmie e rutto libero © Stagione 2026/27 — sedici partecipanti, un solo vincitore.</p>
+    <p class="font-mono">Ultimo aggiornamento: giornata 3</p>
   </div>
 </footer>
 
